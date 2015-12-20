@@ -7,6 +7,8 @@ import (
 	"github.com/nlandolfi/set"
 )
 
+// --- Node Stack {{{
+
 type nodeStack []*node
 
 func (ns *nodeStack) pushSlice(n []*node) {
@@ -34,6 +36,39 @@ func (ns *nodeStack) pop() *node {
 func (ns *nodeStack) length() int {
 	return len(*ns)
 }
+
+// --- }}}
+
+// --- Node Queue {{{
+
+type nodeQueue []*node
+
+func (nq *nodeQueue) pushSlice(n []*node) {
+	newqueue := make([]*node, len(*nq)+len(n))
+	for i := range *nq {
+		newqueue[i] = (*nq)[i]
+	}
+	o := len(*nq)
+	for i := range n {
+		newqueue[o+i] = n[i]
+	}
+}
+
+func (nq *nodeQueue) push(n *node) {
+	*nq = append(*nq, n)
+}
+
+func (nq *nodeQueue) pop() *node {
+	t := (*nq)[0]
+	*nq = (*nq)[1:len(*nq)]
+	return t
+}
+
+func (nq *nodeQueue) length() int {
+	return len(*nq)
+}
+
+// --- }}}
 
 // Returns the path from start until a goal (node satisfying 'satisfaction') using the depth first search
 func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
