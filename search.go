@@ -37,33 +37,36 @@ func (ns *nodeStack) length() int {
 
 // --- }}}
 
-// --- Node Queue {{{
+// --- List Queue {{{
 
-type nodeQueue []*node
+// notes: first elem is next
 
-func (nq *nodeQueue) pushSlice(n []*node) {
-	newqueue := make([]*node, len(*nq)+len(n))
-	for i := range *nq {
-		newqueue[i] = (*nq)[i]
+type listQueue []*list.List
+
+func (lq *listQueue) pushSlice(l []*list.List) {
+	newqueue := make([]*list.List, len(*lq)+len(l))
+	for i := range *lq {
+		newqueue[i] = (*lq)[i]
 	}
-	o := len(*nq)
-	for i := range n {
-		newqueue[o+i] = n[i]
+	o := len(*lq)
+	for i := range l {
+		newqueue[o+i] = l[i]
 	}
+	*lq = newqueue
 }
 
-func (nq *nodeQueue) push(n *node) {
-	*nq = append(*nq, n)
+func (lq *listQueue) push(l *list.List) {
+	*lq = append(*lq, l)
 }
 
-func (nq *nodeQueue) pop() *node {
-	t := (*nq)[0]
-	*nq = (*nq)[1:len(*nq)]
+func (lq *listQueue) pop() *list.List {
+	t := (*lq)[0]
+	*lq = (*lq)[1:len(*lq)]
 	return t
 }
 
-func (nq *nodeQueue) length() int {
-	return len(*nq)
+func (lq *listQueue) length() int {
+	return len(*lq)
 }
 
 // --- }}}
@@ -117,4 +120,46 @@ func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, e
 	}
 
 	return path, fmt.Errorf("path not found to satisfaction")
+}
+
+// Returns the path from start until a goal (node satisfying 'satisfaction') using the breadth first search
+func BreadthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
+	// The set of nodes we have already examined, prevents cycles
+	seen := make(map[*node]bool)
+
+	// The queue of nodes to examine
+	queue := make(listQueue, 1)
+	l := list.New()
+	l.PushBack(start)
+	queue[0] = l
+
+	// The edge tree
+	edgeTree := make(map[*node]*node)
+	edgeTree[start] = nil
+
+	for queue.length() != 0 {
+		currentList := queue.pop()
+		current := currentList.Back().Value.(*node)
+
+		// If we have already seen this node, bail
+		if _, ok := seen[current]; ok {
+			continue
+		} else {
+			seen[current] = true // else mark it as seen
+		}
+
+		// Does this node satisfy (terminate) our search
+		if satisfaction(current) {
+			return currentList, nil // we can stop now
+		}
+
+		for _, v := range *current.edges {
+			l := list.New()
+			l.PushBackList(currentList)
+			l.PushBack(v)
+			queue.push(l)
+		}
+	}
+
+	return list.New(), fmt.Errorf("path not found to satisfaction")
 }

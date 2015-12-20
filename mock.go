@@ -64,4 +64,24 @@ func Test() {
 	} else {
 		log.Printf("The code is wrong, there should be no path from G to S")
 	}
+
+	// -- Breadth First Search
+
+	l, err = BreadthFirstSearch(S, func(n *node) bool {
+		return n == G
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	e = l.Front()
+
+	s = ""
+	for e != nil {
+		s += fmt.Sprintf("%s, ", m[e.Value.(*node).id])
+		e = e.Next()
+	}
+
+	log.Printf("%s", s[0:len(s)-1])
 }
