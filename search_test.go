@@ -1,6 +1,11 @@
 package graph
 
-import "testing"
+import (
+	"container/list"
+	"testing"
+)
+
+var llist *list.List
 
 func BenchmarkDFS(b *testing.B) {
 	// run the Fib function b.N times
@@ -15,9 +20,13 @@ func BenchmarkDFS(b *testing.B) {
 	B.edges = &[]*node{C}
 	C.edges = &[]*node{G}
 
+	var l *list.List
+
 	for n := 0; n < b.N; n++ {
-		DepthFirstSearch(S, func(n *node) bool {
+		l, _ = DepthFirstSearch(S, func(n *node) bool {
 			return n == G
 		})
 	}
+
+	llist = l
 }

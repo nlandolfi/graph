@@ -3,8 +3,6 @@ package graph
 import (
 	"container/list"
 	"fmt"
-
-	"github.com/nlandolfi/set"
 )
 
 // --- Node Stack {{{
@@ -73,7 +71,7 @@ func (nq *nodeQueue) length() int {
 // Returns the path from start until a goal (node satisfying 'satisfaction') using the depth first search
 func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
 	// The set of nodes we have already examined, prevents cycles
-	seen := set.New()
+	seen := make(map[*node]bool)
 
 	// The path we are currently examining
 	path := list.New()
@@ -91,10 +89,10 @@ func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, e
 		current := stack.pop()
 
 		// If we have already seen this node, bail
-		if seen.Contains(current) {
+		if _, ok := seen[current]; ok {
 			continue
 		} else {
-			seen.Add(current) // else mark it as seen
+			seen[current] = true // else mark it as seen
 		}
 
 		// Have we dropped down a level?
