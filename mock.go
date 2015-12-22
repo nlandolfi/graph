@@ -7,16 +7,6 @@ import (
 
 func Test() {
 
-	/*
-			    A
-			  ⇗ | ⇘
-			S   |  C ⇒ G
-			  ⇘ v ⇗
-				B
-
-		Depth First Search: S → B → C → G (cause B is after A in the graph definition so wins in tie break)
-	*/
-
 	S := NewNode(1)
 	A := NewNode(2)
 	B := NewNode(3)

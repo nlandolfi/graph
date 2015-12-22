@@ -5,6 +5,78 @@ import (
 	"testing"
 )
 
+/*
+               _______A_______             1
+			 ↙        ↓       ↘
+		   _B_       _C_       _D_         3
+     	 ↙  ↓ ↘    ↙  ↓ ↘    ↙  ↓ ↘
+		 E  F  G  H   I  J  K   L  M       9
+
+		 DFS: Á → B → E → F → G → C → H → I → J → D → K → L → M
+		 BFS: A → B → C → D → E → F → G → H → I → J → K → L → M
+*/
+
+func TestDFS(t *testing.T) {
+	nodes := make([]*node, 13)
+	c := 0
+
+	A := NewNode(1)
+	B := NewNode(2)
+	C := NewNode(3)
+	D := NewNode(4)
+	E := NewNode(5)
+	F := NewNode(6)
+	G := NewNode(7)
+	H := NewNode(8)
+	I := NewNode(9)
+	J := NewNode(10)
+	K := NewNode(11)
+	L := NewNode(12)
+	M := NewNode(13)
+
+	nodeMap := map[int]string{
+		1:  "A",
+		2:  "B",
+		3:  "C",
+		4:  "D",
+		5:  "E",
+		6:  "F",
+		7:  "G",
+		8:  "H",
+		9:  "I",
+		10: "J",
+		11: "K",
+		12: "L",
+		13: "M",
+	}
+
+	A.edges = &[]*node{D, C, B}
+	B.edges = &[]*node{G, F, E}
+	C.edges = &[]*node{J, I, H}
+	D.edges = &[]*node{M, L, K}
+
+	DepthFirstSearch(A, func(n *node) bool {
+		nodes[c] = n
+		c++
+		return false // continue search
+	})
+
+	if c != 13 {
+		t.Fatalf("Expected to see 13 nodes on search")
+	}
+
+	// DFS: Á → B → E → F → G → C → H → I → J → D → K → L → M
+	expectedOrder := []string{"A", "B", "E", "F", "G", "C", "H", "I", "J", "D", "K", "L", "M"}
+
+	for i := range nodes {
+		if nodeMap[nodes[i].id] != expectedOrder[i] {
+			t.Fatalf("Expected node %s, but got %s in index %d", expectedOrder[i], nodeMap[nodes[i].id], i)
+		}
+	}
+}
+
+// --- Benchmarks {{{
+
 var llist *list.List
 
 func BenchmarkDFS(b *testing.B) {
@@ -54,3 +126,5 @@ func BenchmarkBFS(b *testing.B) {
 
 	llist = l
 }
+
+// --- }}}
