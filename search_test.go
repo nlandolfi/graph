@@ -62,11 +62,31 @@ func TestDFS(t *testing.T) {
 	})
 
 	if c != 13 {
-		t.Fatalf("Expected to see 13 nodes on search")
+		t.Fatalf("Expected to see 13 nodes on depth search")
 	}
 
 	// DFS: Á → B → E → F → G → C → H → I → J → D → K → L → M
 	expectedOrder := []string{"A", "B", "E", "F", "G", "C", "H", "I", "J", "D", "K", "L", "M"}
+
+	for i := range nodes {
+		if nodeMap[nodes[i].id] != expectedOrder[i] {
+			t.Fatalf("Expected node %s, but got %s in index %d", expectedOrder[i], nodeMap[nodes[i].id], i)
+		}
+	}
+
+	c = 0
+	BreadthFirstSearch(A, func(n *node) bool {
+		nodes[c] = n
+		c++
+		return false // continue search
+	})
+
+	if c != 13 {
+		t.Fatalf("Expected to see 13 nodes on breadth first search")
+	}
+
+	// BFS: A → B → C → D → E → F → G → H → I → J → K → L → M
+	expectedOrder = []string{"A", "D", "C", "B", "M", "L", "K", "J", "I", "H", "G", "F", "E"}
 
 	for i := range nodes {
 		if nodeMap[nodes[i].id] != expectedOrder[i] {

@@ -71,6 +71,8 @@ func (lq *listQueue) length() int {
 
 // --- }}}
 
+// --- Depth First Search {{{
+
 // Returns the path from start until a goal (node satisfying 'satisfaction') using the depth first search
 func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
 	// The set of nodes we have already examined, prevents cycles
@@ -122,6 +124,10 @@ func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, e
 	return path, fmt.Errorf("path not found to satisfaction")
 }
 
+// --- }}}
+
+// --- Breadth First Search {{{
+
 // Returns the path from start until a goal (node satisfying 'satisfaction') using the breadth first search
 func BreadthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
 	// The set of nodes we have already examined, prevents cycles
@@ -163,3 +169,5 @@ func BreadthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List,
 
 	return list.New(), fmt.Errorf("path not found to satisfaction")
 }
+
+// --- }}}
