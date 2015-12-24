@@ -2,7 +2,7 @@ package graph
 
 // Element should really only take pointer types,
 // it doesn't make sense to copy values all over
-// the place
+// the place , but then we may need a comparison func
 type Element interface{}
 
 type Interface interface {
