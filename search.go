@@ -74,6 +74,8 @@ func (lq *listQueue) length() int {
 // --- Depth First Search {{{
 
 // Returns the path from start until a goal (node satisfying 'satisfaction') using the depth first search
+// note that the visitor pattern can easily be implemented withh a satisfaction func that records what it gets
+// called on, and a then always returns false
 func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
 	// The set of nodes we have already examined, prevents cycles
 	seen := make(map[*node]bool)
