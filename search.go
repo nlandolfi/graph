@@ -7,10 +7,10 @@ import (
 
 // --- Node Stack {{{
 
-type nodeStack []*node
+type nodeStack []Node
 
-func (ns *nodeStack) pushSlice(n []*node) {
-	newstack := make([]*node, len(*ns)+len(n))
+func (ns *nodeStack) pushSlice(n []Node) {
+	newstack := make([]Node, len(*ns)+len(n))
 	for i := range *ns {
 		newstack[i] = (*ns)[i]
 	}
@@ -21,11 +21,11 @@ func (ns *nodeStack) pushSlice(n []*node) {
 	*ns = newstack
 }
 
-func (ns *nodeStack) push(n *node) {
+func (ns *nodeStack) push(n Node) {
 	*ns = append(*ns, n)
 }
 
-func (ns *nodeStack) pop() *node {
+func (ns *nodeStack) pop() Node {
 	t := (*ns)[len(*ns)-1]
 	*ns = (*ns)[0 : len(*ns)-1]
 	return t
@@ -76,9 +76,9 @@ func (lq *listQueue) length() int {
 // Returns the path from start until a goal (node satisfying 'satisfaction') using the depth first search
 // note that the visitor pattern can easily be implemented withh a satisfaction func that records what it gets
 // called on, and a then always returns false
-func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
+func DepthFirstSearch(start Node, satisfaction func(Node) bool) (*list.List, error) {
 	// The set of nodes we have already examined, prevents cycles
-	seen := make(map[*node]bool)
+	seen := make(map[Node]bool)
 
 	// The path we are currently examining
 	path := list.New()
@@ -88,7 +88,7 @@ func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, e
 	stack[0] = start
 
 	// The levels of each node, (number of edges away from start)
-	levels := make(map[*node]int)
+	levels := make(map[Node]int)
 	levels[start] = 0
 	level := 0
 
@@ -117,8 +117,8 @@ func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, e
 
 		// otherwise, we want to look at all the slice on the next level
 		level += 1
-		stack.pushSlice(*current.edges)
-		for _, v := range *current.edges {
+		stack.pushSlice(current.Edges())
+		for _, v := range current.Edges() {
 			levels[v] = level
 		}
 	}
@@ -131,9 +131,9 @@ func DepthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, e
 // --- Breadth First Search {{{
 
 // Returns the path from start until a goal (node satisfying 'satisfaction') using the breadth first search
-func BreadthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List, error) {
+func BreadthFirstSearch(start Node, satisfaction func(Node) bool) (*list.List, error) {
 	// The set of nodes we have already examined, prevents cycles
-	seen := make(map[*node]bool)
+	seen := make(map[Node]bool)
 
 	// The queue of nodes to examine
 	queue := make(listQueue, 1)
@@ -142,7 +142,7 @@ func BreadthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List,
 	queue[0] = l
 
 	// The edge tree
-	edgeTree := make(map[*node]*node)
+	edgeTree := make(map[Node]Node)
 	edgeTree[start] = nil
 
 	for queue.length() != 0 {
@@ -161,7 +161,7 @@ func BreadthFirstSearch(start *node, satisfaction func(*node) bool) (*list.List,
 			return currentList, nil // we can stop now
 		}
 
-		for _, v := range *current.edges {
+		for _, v := range current.edges {
 			l := list.New()
 			l.PushBackList(currentList)
 			l.PushBack(v)

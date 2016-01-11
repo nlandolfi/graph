@@ -1,8 +1,10 @@
-package graph
+package graph_test
 
 import (
 	"container/list"
 	"testing"
+
+	"github.com/nlandolfi/graph"
 )
 
 /*
@@ -17,22 +19,22 @@ import (
 */
 
 func TestDFS(t *testing.T) {
-	nodes := make([]*node, 13)
+	nodes := make([]graph.Node, 13)
 	c := 0
 
-	A := NewNode(1)
-	B := NewNode(2)
-	C := NewNode(3)
-	D := NewNode(4)
-	E := NewNode(5)
-	F := NewNode(6)
-	G := NewNode(7)
-	H := NewNode(8)
-	I := NewNode(9)
-	J := NewNode(10)
-	K := NewNode(11)
-	L := NewNode(12)
-	M := NewNode(13)
+	A := graph.NewNode(1)
+	B := graph.NewNode(2)
+	C := graph.NewNode(3)
+	D := graph.NewNode(4)
+	E := graph.NewNode(5)
+	F := graph.NewNode(6)
+	G := graph.NewNode(7)
+	H := graph.NewNode(8)
+	I := graph.NewNode(9)
+	J := graph.NewNode(10)
+	K := graph.NewNode(11)
+	L := graph.NewNode(12)
+	M := graph.NewNode(13)
 
 	nodeMap := map[int]string{
 		1:  "A",
@@ -50,12 +52,12 @@ func TestDFS(t *testing.T) {
 		13: "M",
 	}
 
-	A.edges = &[]*node{D, C, B}
-	B.edges = &[]*node{G, F, E}
-	C.edges = &[]*node{J, I, H}
-	D.edges = &[]*node{M, L, K}
+	A.SetEdges([]graph.Node{D, C, B})
+	B.SetEdges([]graph.Node{G, F, E})
+	C.SetEdges([]graph.Node{J, I, H})
+	D.SetEdges([]graph.Node{M, L, K})
 
-	DepthFirstSearch(A, func(n *node) bool {
+	graph.DepthFirstSearch(A, func(n graph.Node) bool {
 		nodes[c] = n
 		c++
 		return false // continue search
@@ -69,13 +71,13 @@ func TestDFS(t *testing.T) {
 	expectedOrder := []string{"A", "B", "E", "F", "G", "C", "H", "I", "J", "D", "K", "L", "M"}
 
 	for i := range nodes {
-		if nodeMap[nodes[i].id] != expectedOrder[i] {
-			t.Fatalf("Expected node %s, but got %s in index %d", expectedOrder[i], nodeMap[nodes[i].id], i)
+		if nodeMap[nodes[i].ID()] != expectedOrder[i] {
+			t.Fatalf("Expected node %s, but got %s in index %d", expectedOrder[i], nodeMap[nodes[i].ID()], i)
 		}
 	}
 
 	c = 0
-	BreadthFirstSearch(A, func(n *node) bool {
+	graph.BreadthFirstSearch(A, func(n graph.Node) bool {
 		nodes[c] = n
 		c++
 		return false // continue search
@@ -89,8 +91,8 @@ func TestDFS(t *testing.T) {
 	expectedOrder = []string{"A", "D", "C", "B", "M", "L", "K", "J", "I", "H", "G", "F", "E"}
 
 	for i := range nodes {
-		if nodeMap[nodes[i].id] != expectedOrder[i] {
-			t.Fatalf("Expected node %s, but got %s in index %d", expectedOrder[i], nodeMap[nodes[i].id], i)
+		if nodeMap[nodes[i].ID()] != expectedOrder[i] {
+			t.Fatalf("Expected node %s, but got %s in index %d", expectedOrder[i], nodeMap[nodes[i].ID()], i)
 		}
 	}
 }
@@ -101,22 +103,22 @@ var llist *list.List
 
 func BenchmarkDFS(b *testing.B) {
 	// run the Fib function b.N times
-	S := NewNode(1)
-	A := NewNode(2)
-	B := NewNode(3)
-	C := NewNode(4)
-	G := NewNode(5)
+	S := graph.NewNode(1)
+	A := graph.NewNode(2)
+	B := graph.NewNode(3)
+	C := graph.NewNode(4)
+	G := graph.NewNode(5)
 
-	S.edges = &[]*node{A, B} // note b wins tiebreak
-	A.edges = &[]*node{B, C} // note c wins tiebreak
-	B.edges = &[]*node{C}
-	C.edges = &[]*node{G}
+	S.SetEdges([]graph.Node{A, B}) // note b wins tiebreak
+	A.SetEdges([]graph.Node{B, C}) // note c wins tiebreak
+	B.SetEdges([]graph.Node{C})
+	C.SetEdges([]graph.Node{G})
 
 	var l *list.List
 
 	for n := 0; n < b.N; n++ {
-		l, _ = DepthFirstSearch(S, func(n *node) bool {
-			return n == G
+		l, _ = graph.DepthFirstSearch(S, func(n graph.Node) bool {
+			return n.ID() == G.ID()
 		})
 	}
 
@@ -125,22 +127,22 @@ func BenchmarkDFS(b *testing.B) {
 
 func BenchmarkBFS(b *testing.B) {
 	// run the Fib function b.N times
-	S := NewNode(1)
-	A := NewNode(2)
-	B := NewNode(3)
-	C := NewNode(4)
-	G := NewNode(5)
+	S := graph.NewNode(1)
+	A := graph.NewNode(2)
+	B := graph.NewNode(3)
+	C := graph.NewNode(4)
+	G := graph.NewNode(5)
 
-	S.edges = &[]*node{A, B} // note b wins tiebreak
-	A.edges = &[]*node{B, C} // note c wins tiebreak
-	B.edges = &[]*node{C}
-	C.edges = &[]*node{G}
+	S.SetEdges([]graph.Node{A, B}) // note b wins tiebreak
+	A.SetEdges([]graph.Node{B, C}) // note c wins tiebreak
+	B.SetEdges([]graph.Node{C})
+	C.SetEdges([]graph.Node{G})
 
 	var l *list.List
 
 	for n := 0; n < b.N; n++ {
-		l, _ = BreadthFirstSearch(S, func(n *node) bool {
-			return n == G
+		l, _ = graph.BreadthFirstSearch(S, func(n graph.Node) bool {
+			return n.ID() == G.ID()
 		})
 	}
 

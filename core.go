@@ -10,8 +10,9 @@ type Interface interface {
 }
 
 type Node interface {
-	Element() Element
-	Edges() <-chan Node
+	ID() int
+	Edges() []Node
+	SetEdges([]Node)
 }
 
 /// -- forget about ^^ for now
@@ -19,15 +20,27 @@ type Node interface {
 type node struct {
 	//`value  Element
 	id    int
-	edges *[]*node
+	edges []Node
+}
+
+func (n *node) ID() int {
+	return n.id
+}
+
+func (n *node) Edges() []Node {
+	nodes := make([]Node, len(n.edges))
+	for i, e := range n.edges {
+		nodes[i] = e
+	}
+	return nodes
 }
 
 type graph []*node
 
-func NewNode(id int, edges ...*node) *node {
-	return &node{id: id, edges: &edges}
+func NewNode(id int, edges ...Node) *node {
+	return &node{id: id, edges: edges}
 }
 
-func (n *node) SetEdges(edges []*node) {
-	n.edges = &edges
+func (n *node) SetEdges(edges []Node) {
+	n.edges = edges
 }

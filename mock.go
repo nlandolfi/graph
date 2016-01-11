@@ -21,13 +21,13 @@ func Test() {
 		5: "G",
 	}
 
-	S.edges = &[]*node{A, B} // note b wins tiebreak
-	A.edges = &[]*node{B, C} // note c wins tiebreak
-	B.edges = &[]*node{C}
-	C.edges = &[]*node{G}
+	S.SetEdges([]Node{A, B}) // note b wins tiebreak
+	A.SetEdges([]Node{B, C}) // note c wins tiebreak
+	B.SetEdges([]Node{C})
+	C.SetEdges([]Node{G})
 
-	l, err := DepthFirstSearch(S, func(n *node) bool {
-		return n == G
+	l, err := DepthFirstSearch(S, func(n Node) bool {
+		return n.ID() == G.ID()
 	})
 
 	if err != nil {
@@ -44,8 +44,8 @@ func Test() {
 
 	log.Printf("%s", s[0:len(s)-1])
 
-	l, err = DepthFirstSearch(G, func(n *node) bool {
-		return n == S
+	l, err = DepthFirstSearch(G, func(n Node) bool {
+		return n.ID() == S.ID()
 	})
 
 	// if you start with g, there is no path to s
@@ -57,8 +57,8 @@ func Test() {
 
 	// -- Breadth First Search
 
-	l, err = BreadthFirstSearch(S, func(n *node) bool {
-		return n == G
+	l, err = BreadthFirstSearch(S, func(n Node) bool {
+		return n.ID() == G.ID()
 	})
 
 	if err != nil {
