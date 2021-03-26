@@ -13,6 +13,7 @@ type Node interface {
 	ID() int
 	Edges() []Node
 	SetEdges([]Node)
+	Parents(g Interface) []Node
 }
 
 /// -- forget about ^^ for now
@@ -43,4 +44,30 @@ func NewNode(id int, edges ...Node) *node {
 
 func (n *node) SetEdges(edges []Node) {
 	n.edges = edges
+}
+
+func contains(ns []Node, n Node) bool {
+	for _, o := range ns {
+		if o == n {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (n *node) Parents(g Interface) []Node {
+	p := make([]Node, 0)
+
+	for other := range g.Nodes() {
+		if other.(*node) == n {
+			continue
+		}
+
+		if contains(other.Edges(), n) {
+			p = append(p, other)
+		}
+	}
+
+	return p
 }
